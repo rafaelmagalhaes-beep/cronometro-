@@ -1,0 +1,17 @@
+{
+  "name": "Cronômetro Campus Party",
+  "short_name": "Cronômetro CP",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0b0d17",
+  "theme_color": "#0099FF",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "Colorful Graffiti Circle Framed Instagram Profile Picture.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
