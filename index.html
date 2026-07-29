@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Cronômetro de Palco - Campus Party</title>
+  
+  <!-- Configurações PWA -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#265697">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Cronômetro CP">
+
+  <!-- Fontes Oficiais da Campus Party -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Poppins:wght@600;700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: #0b0d17;
+      font-family: 'Lato', sans-serif;
+      color: #ffffff;
+    }
+
+    /* 1. TELA DE CONFIGURAÇÃO (SETUP) */
+    .setup-screen {
+      background-image: url('1.png');
+      background-size: cover;
+      background-position: center;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+      position: absolute;
+      top: 0;
+      left: 0;
+      overflow-y: auto;
+    }
+
+    .setup-card {
+      background: linear-gradient(135deg, rgba(20, 42, 82, 0.98) 0%, rgba(38, 86, 151, 0.95) 60%, rgba(0, 153, 255, 0.9) 100%);
+      backdrop-filter: blur(10px);
+      padding: 1.5rem 1.2rem;
+      border-radius: 1.2rem;
+      box-shadow: 0 0 30px rgba(0, 153, 255, 0.4), 0 0 15px rgba(254, 221, 0, 0.3);
+      text-align: center;
+      max-width: 480px;
+      width: 92%;
+      border: 2px solid #FEDD00;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+      margin: auto;
+    }
+
+    .brand-logo-setup {
+      max-width: 200px;
+      width: 65%;
+      height: auto;
+      filter: drop-shadow(0 0 8px rgba(254, 221, 0, 0.4));
+    }
+
+    .setup-card h1 {
+      font-family: 'Poppins', sans-serif;
+      font-size: clamp(1.2rem, 4vw, 1.6rem);
+      font-weight: 800;
+      color: #FEDD00;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .config-panel {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 0.9rem;
+      text-align: left;
+    }
+
+    .input-group {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .input-group label {
+      font-size: clamp(0.85rem, 3.2vw, 1rem);
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    .input-group input[type="number"] {
+      width: 75px;
+      padding: 0.5rem;
+      border-radius: 0.5rem;
+      border: 2px solid #FEDD00;
+      background-color: rgba(26, 56, 102, 0.9);
+      color: #FEDD00;
+      font-family: 'Poppins', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    /* Correção do vaza-layout nos botões de atalho */
+    .preset-container {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      width: 100%;
+    }
+
+    .preset-title {
+      font-size: clamp(0.8rem, 3vw, 0.9rem);
+      color: #e2e8f0;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .preset-group {
+      display: flex;
+      flex: 1;
+      gap: 4px;
+      width: 100%;
+    }
+
+    .preset-btn {
+      flex: 1;
+      min-width: 0; /* Previne estouro flexbox */
+      padding: 0.5rem 0.2rem;
+      font-family: 'Poppins', sans-serif;
+      font-size: clamp(0.75rem, 2.8vw, 0.85rem);
+      font-weight: 700;
+      background-color: rgba(26, 56, 102, 0.9);
+      color: #FEDD00;
+      border: 1px solid #FEDD00;
+      border-radius: 0.4rem;
+      cursor: pointer;
+      text-align: center;
+    }
+
+    .btn-notification {
+      background: transparent;
+      color: #FEDD00;
+      border: 1px dashed #FEDD00;
+      padding: 0.6rem;
+      border-radius: 0.5rem;
+      font-size: 0.85rem;
+      cursor: pointer;
+      width: 100%;
+      font-weight: bold;
+    }
+
+    .btn-start-presentation {
+      width: 100%;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #FEDD00, #ffea60);
+      color: #265697;
+      padding: 0.9rem;
+      font-size: clamp(1rem, 3.5vw, 1.2rem);
+      font-weight: 900;
+      border: none;
+      border-radius: 0.8rem;
+      cursor: pointer;
+      text-transform: uppercase;
+    }
+
+    /* 2. TELA DO CRONÔMETRO */
+    .timer-screen {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      width: 100vw;
+      height: 100vh;
+      padding: clamp(1rem, 3vh, 2rem) 1rem;
+      position: relative;
+      transition: background-color 0.4s ease;
+    }
+
+    .brand-logo-timer {
+      max-width: 150px;
+      width: 35vw;
+      height: auto;
+    }
+
+    body.theme-normal .timer-screen { background-color: #265697; }
+    body.theme-perguntas .timer-screen { background-color: #0099FF; }
+    body.theme-10min .timer-screen { background-color: #FF6B00; }
+    body.theme-5min .timer-screen { background-color: #FEDD00; }
+    body.theme-final .timer-screen { background-color: #D32F2F; }
+
+    .status-alert {
+      font-family: 'Poppins', sans-serif;
+      font-size: clamp(1.1rem, 4.5vw, 1.8rem);
+      font-weight: 900;
+      padding: 0.5rem 1.2rem;
+      border-radius: 0.8rem;
+      text-transform: uppercase;
+      text-align: center;
+      max-width: 90%;
+      line-height: 1.2;
+    }
+
+    .status-normal { background-color: rgba(26, 56, 102, 0.9); color: #FEDD00; border: 2px solid #FEDD00; }
+    .status-perguntas { background-color: #265697; color: #ffffff; border: 2px solid #ffffff; }
+    .status-10min { background-color: #ffffff; color: #FF6B00; }
+    .status-5min { background-color: #265697; color: #FEDD00; }
+    .status-final { background-color: #ffffff; color: #D32F2F; }
+
+    /* Números com ajuste automático */
+    .display-giant {
+      font-size: clamp(4.5rem, 21vw, 15rem);
+      font-weight: 900;
+      font-family: 'Poppins', sans-serif;
+      color: #ffffff;
+      line-height: 0.9;
+      text-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+      text-align: center;
+      margin: auto 0;
+    }
+
+    body.theme-5min .display-giant {
+      color: #265697;
+      text-shadow: none;
+    }
+
+    /* Botões Flutuantes Ajustados para Mobile */
+    .floating-controls {
+      display: flex;
+      gap: 0.4rem;
+      width: 100%;
+      max-width: 500px;
+      justify-content: center;
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+
+    .floating-btn {
+      flex: 1;
+      font-family: 'Poppins', sans-serif;
+      padding: 0.6rem 0.2rem;
+      font-size: clamp(0.7rem, 2.5vw, 0.9rem);
+      font-weight: 700;
+      border: 2px solid #FEDD00;
+      border-radius: 0.6rem;
+      cursor: pointer;
+      background-color: rgba(38, 86, 151, 0.95);
+      color: #FEDD00;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    /* REGRAS DE ADAPTAÇÃO PARA CELULAR DEITADO (LANDSCAPE) */
+    @media (orientation: landscape) and (max-height: 500px) {
+      .timer-screen {
+        padding: 0.5rem 1rem;
+      }
+      .brand-logo-timer {
+        display: none; /* Oculta a logo quando deitado para dar espaço vital aos números */
+      }
+      .status-alert {
+        font-size: 1rem;
+        padding: 0.3rem 1rem;
+        margin-top: 0.2rem;
+      }
+      .display-giant {
+        font-size: clamp(3.5rem, 28vh, 8rem);
+        margin: 0;
+      }
+      .floating-controls {
+        gap: 0.3rem;
+      }
+      .floating-btn {
+        padding: 0.4rem 0.2rem;
+        font-size: 0.75rem;
+      }
+    }
+  </style>
+</head>
+<body class="theme-normal">
+
+  <!-- 1. TELA DE CONFIGURAÇÃO (SETUP) -->
+  <div id="setupScreen" class="setup-screen">
+    <div class="setup-card">
+      <img src="LOGO_CP-BRASIL_BRANCO..png" alt="Campus Party Brasil" class="brand-logo-setup">
+      <h1>Cronômetro de Palco</h1>
+
+      <div class="config-panel">
+        <div class="input-group">
+          <label for="minutes">Tempo Total (min):</label>
+          <input type="number" id="minutes" min="1" max="300" value="30">
+        </div>
+
+        <div class="preset-container">
+          <span class="preset-title">Atalhos:</span>
+          <div class="preset-group">
+            <button class="preset-btn" onclick="setPreset(15)">15m</button>
+            <button class="preset-btn" onclick="setPreset(30)">30m</button>
+            <button class="preset-btn" onclick="setPreset(45)">45m</button>
+            <button class="preset-btn" onclick="setPreset(60)">60m</button>
+          </div>
+        </div>
+
+        <hr style="border: 0; border-top: 1px solid rgba(255, 255, 255, 0.2);">
+
+        <div class="input-group">
+          <label for="questionMinutes">Perguntas (min rest.):</label>
+          <input type="number" id="questionMinutes" min="1" max="300" value="15">
+        </div>
+
+        <button id="btnAllowNotify" class="btn-notification">🔔 Ativar Notificações & Som</button>
+      </div>
+
+      <button id="btnStartSetup" class="btn-start-presentation">🚀 Iniciar Apresentação</button>
+    </div>
+  </div>
+
+  <!-- 2. TELA PRINCIPAL DO CRONÔMETRO -->
+  <div id="timerScreen" class="timer-screen">
+    <img src="LOGO_CP-BRASIL_BRANCO..png" alt="Campus Party Brasil" class="brand-logo-timer">
+
+    <div id="status" class="status-alert status-normal">Aguardando Início</div>
+    <div id="display" class="display-giant">30:00</div>
+
+    <div class="floating-controls">
+      <button id="btnStartMain" class="floating-btn">▶️ Iniciar</button>
+      <button id="btnPause" class="floating-btn" disabled>⏸️ Pausar</button>
+      <button id="btnReset" class="floating-btn">🔄 Reiniciar</button>
+      <button id="btnSettings" class="floating-btn">⚙️ Ajustes</button>
+    </div>
+  </div>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('service-worker.js');
+    }
+
+    let timer = null;
+    let endTime = null; // Armazena timestamp do fim do tempo
+    let remainingSecondsOnPause = 0;
+    let isPaused = false;
+    
+    let notifiedPerguntas = false;
+    let notified10m = false;
+    let notified5m = false;
+
+    // Contexto de Áudio para desbloquear som no celular
+    let audioCtx = null;
+
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
+
+    function playBeep() {
+      initAudio();
+      if (!audioCtx) return;
+
+      try {
+        const oscillator = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+
+        oscillator.type = 'sine';
+        oscillator.frequency.value = 880;
+        gain.gain.value = 0.3;
+
+        oscillator.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        oscillator.start();
+        setTimeout(() => oscillator.stop(), 600);
+      } catch (e) {
+        console.log("Erro ao reproduzir áudio: ", e);
+      }
+    }
+
+    const setupScreen = document.getElementById('setupScreen');
+    const timerScreen = document.getElementById('timerScreen');
+    const display = document.getElementById('display');
+    const status = document.getElementById('status');
+    const inputMinutes = document.getElementById('minutes');
+    const inputQuestionMinutes = document.getElementById('questionMinutes');
+    const btnAllowNotify = document.getElementById('btnAllowNotify');
+    
+    const btnStartSetup = document.getElementById('btnStartSetup');
+    const btnStartMain = document.getElementById('btnStartMain');
+    const btnPause = document.getElementById('btnPause');
+    const btnReset = document.getElementById('btnReset');
+    const btnSettings = document.getElementById('btnSettings');
+    const body = document.body;
+
+    btnAllowNotify.addEventListener('click', () => {
+      initAudio();
+      playBeep(); // Bip de teste ao clicar
+
+      if ('Notification' in window) {
+        Notification.requestPermission().then(permission => {
+          if (permission === 'granted') {
+            btnAllowNotify.textContent = '✅ Som e Notificações Ativados!';
+            btnAllowNotify.style.borderColor = '#4CAF50';
+            btnAllowNotify.style.color = '#4CAF50';
+          }
+        });
+      }
+    });
+
+    function sendPushNotification(title, message) {
+      playBeep(); // Toca o som localmente
+      
+      if ('vibrate' in navigator) {
+        navigator.vibrate([300, 100, 300]); // Vibra o celular
+      }
+
+      if ('Notification' in window && Notification.permission === 'granted') {
+        navigator.serviceWorker.ready.then(registration => {
+          registration.showNotification(title, {
+            body: message,
+            icon: 'LOGO_CP-BRASIL_BRANCO..png',
+            vibrate: [300, 100, 300],
+            tag: 'stage-timer'
+          });
+        });
+      }
+    }
+
+    function formatTime(seconds) {
+      const mins = Math.floor(seconds / 60);
+      const secs = seconds % 60;
+      return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+    }
+
+    function checkAlerts(currentSeconds) {
+      const questionSecs = (parseInt(inputQuestionMinutes.value) || 0) * 60;
+
+      if (currentSeconds <= 0) {
+        status.textContent = "⏱️ TEMPO ESGOTADO!";
+        status.className = "status-alert status-final";
+        body.className = "theme-final";
+      } else if (currentSeconds <= 300) { 
+        status.textContent = "⚠️ Faltam 5 Minutos!";
+        status.className = "status-alert status-5min";
+        body.className = "theme-5min";
+
+        if (!notified5m) {
+          sendPushNotification("⚠️ Campus Party - Palco", "Atenção: Restam apenas 5 minutos!");
+          notified5m = true;
+        }
+      } else if (currentSeconds <= 600) { 
+        status.textContent = "⌛ Faltam 10 Minutos!";
+        status.className = "status-alert status-10min";
+        body.className = "theme-10min";
+
+        if (!notified10m) {
+          sendPushNotification("⌛ Campus Party - Palco", "Faltam 10 minutos para encerrar!");
+          notified10m = true;
+        }
+      } else if (currentSeconds <= questionSecs) { 
+        status.textContent = "❓ Momento de Perguntas!";
+        status.className = "status-alert status-perguntas";
+        body.className = "theme-perguntas";
+
+        if (!notifiedPerguntas) {
+          sendPushNotification("❓ Campus Party - Palco", "Hora de abrir para as perguntas!");
+          notifiedPerguntas = true;
+        }
+      } else {
+        status.textContent = "Em Andamento";
+        status.className = "status-alert status-normal";
+        body.className = "theme-normal";
+      }
+    }
+
+    function updateTimerLoop() {
+      if (!endTime) return;
+
+      const now = Date.now();
+      const diffInSeconds = Math.max(0, Math.ceil((endTime - now) / 1000));
+
+      display.textContent = formatTime(diffInSeconds);
+      checkAlerts(diffInSeconds);
+
+      if (diffInSeconds <= 0) {
+        clearInterval(timer);
+        timer = null;
+        btnStartMain.disabled = false;
+        btnPause.disabled = true;
+        sendPushNotification("⏱️ FIM DE TEMPO!", "O tempo do palco encerrou completamente.");
+      }
+    }
+
+    function startTimer() {
+      initAudio();
+
+      if (!timer) {
+        if (!isPaused) {
+          const mins = parseInt(inputMinutes.value) || 0;
+          if (mins <= 0) return;
+          remainingSecondsOnPause = mins * 60;
+          notifiedPerguntas = false;
+          notified10m = false;
+          notified5m = false;
+        }
+
+        endTime = Date.now() + (remainingSecondsOnPause * 1000);
+        isPaused = false;
+        btnStartMain.disabled = true;
+        btnPause.disabled = false;
+
+        updateTimerLoop();
+        timer = setInterval(updateTimerLoop, 500); // Roda a cada 0.5s para maior precisão
+      }
+    }
+
+    function startFromSetup() {
+      setupScreen.style.display = 'none';
+      timerScreen.style.display = 'flex';
+      startTimer();
+    }
+
+    function pauseTimer() {
+      if (timer) {
+        clearInterval(timer);
+        timer = null;
+        
+        // Calcula o tempo exato que sobrou ao pausar
+        const now = Date.now();
+        remainingSecondsOnPause = Math.max(0, Math.ceil((endTime - now) / 1000));
+        
+        isPaused = true;
+        btnStartMain.disabled = false;
+        btnPause.disabled = true;
+        status.textContent = "Pausado";
+      }
+    }
+
+    function resetTimer() {
+      clearInterval(timer);
+      timer = null;
+      isPaused = false;
+      endTime = null;
+      notifiedPerguntas = false;
+      notified10m = false;
+      notified5m = false;
+
+      const mins = parseInt(inputMinutes.value) || 30;
+      remainingSecondsOnPause = mins * 60;
+
+      display.textContent = formatTime(remainingSecondsOnPause);
+      status.textContent = "Aguardando Início";
+      status.className = "status-alert status-normal";
+      body.className = "theme-normal";
+
+      btnStartMain.disabled = false;
+      btnPause.disabled = true;
+    }
+
+    function showSettings() {
+      resetTimer();
+      timerScreen.style.display = 'none';
+      setupScreen.style.display = 'flex';
+    }
+
+    function setPreset(minutes) {
+      inputMinutes.value = minutes;
+    }
+
+    btnStartSetup.addEventListener('click', startFromSetup);
+    btnStartMain.addEventListener('click', startTimer);
+    btnPause.addEventListener('click', pauseTimer);
+    btnReset.addEventListener('click', resetTimer);
+    btnSettings.addEventListener('click', showSettings);
+  </script>
+</body>
+</html>
