@@ -1,0 +1,16 @@
+{
+  "name": "Cronômetro Campus Party",
+  "short_name": "Cronômetro CP",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0b0d17",
+  "theme_color": "#265697",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "LOGO_CP-BRASIL_BRANCO..png",
+      "sizes": "192x192 512x512",
+      "type": "image/png"
+    }
+  ]
+}
